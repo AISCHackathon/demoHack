@@ -164,3 +164,68 @@ export async function generateSuggestions(techPackJson: string): Promise<string>
 
   return callClaude(messages, SUGGESTIONS_SYSTEM, 2048);
 }
+
+/* ── Generate SVG technical flat drawing ── */
+
+const DRAWING_SYSTEM = `You are SeamAI, an expert fashion technical illustrator. You create precise SVG technical flat drawings (also called "fashion flats" or "tech flats") used in garment tech packs.
+
+You MUST respond with ONLY a raw SVG element (no markdown fences, no commentary, no XML declaration). The SVG must:
+
+1. Use viewBox="0 0 500 400" — landscape orientation to fit BOTH front and back views side by side
+2. Place the FRONT view on the LEFT half (centered around x=125) and the BACK view on the RIGHT half (centered around x=375)
+3. Add labels "FRONT" and "BACK" below each view in small uppercase text
+4. Use ONLY: <svg>, <path>, <line>, <circle>, <rect>, <ellipse>, <text>, <g>, <polyline>, <polygon>
+5. Use stroke="#2A0B11" strokeWidth="1.2" fill="none" for main outlines
+6. Use stroke="#6B1D2A" strokeWidth="0.6" strokeDasharray="3 2" opacity="0.4" for stitch lines
+7. Use stroke="#2A0B11" strokeWidth="0.5" opacity="0.35" for construction detail lines
+8. Use strokeDasharray="5 2.5" strokeWidth="0.5" opacity="0.25" for fold/center lines
+
+CRITICAL PROPORTIONS:
+- Sleeves MUST be anatomically correct length — long sleeves should reach the hip/wrist area (about 70-80% of the body length)
+- The garment should fill most of the vertical space (use y range roughly 20-350)
+- Front and back views should be the SAME size and aligned vertically
+
+DETAIL REQUIREMENTS:
+- Show the EXACT garment described: correct collar style, sleeve length, pocket placement, closure type
+- Include stitch lines along seams (shoulder, side, armhole, hem)
+- Show construction details like darts, pleats, topstitching where mentioned
+- Accurately represent buttons, zippers, snaps, or other closures
+- Include pocket details (welt, patch, flap) as described
+- Show collar/lapel shape accurately (notched, peaked, shawl, spread, band, etc.)
+
+The drawing should look like a professional fashion flat that a factory patternmaker would use.`;
+
+export async function generateTechnicalDrawingSvg(
+  techPackJson: string,
+  imageBase64?: string,
+  mediaType?: string,
+): Promise<string> {
+  const userContent: Array<{ type: string; text?: string; source?: unknown }> = [];
+
+  // If we have the original image, include it for reference
+  if (imageBase64 && mediaType) {
+    userContent.push({
+      type: "image",
+      source: {
+        type: "base64",
+        media_type: mediaType,
+        data: imageBase64,
+      },
+    });
+  }
+
+  userContent.push({
+    type: "text",
+    text: `Based on this tech pack specification${imageBase64 ? " and the reference garment image" : ""}, create a precise SVG technical flat drawing showing front and back views. Match every detail described in the spec — collar style, sleeve length, closures, pockets, seams.\n\nTech Pack:\n${techPackJson}`,
+  });
+
+  const messages = [
+    {
+      role: "user",
+      content: userContent,
+    },
+  ];
+
+  return callClaude(messages, DRAWING_SYSTEM, 8192);
+}
+

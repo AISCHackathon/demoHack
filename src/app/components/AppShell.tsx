@@ -9,7 +9,7 @@ import {
   Factory,
 } from "lucide-react";
 import { Toaster } from "sonner";
-import logoImg from "figma:asset/4fc0ccae98252aec5e5f6491937e7cf9fe9a267c.png";
+import logoImg from "../../assets/4fc0ccae98252aec5e5f6491937e7cf9fe9a267c.png";
 
 const navItems = [
   { path: "/projects/new", icon: PenLine, label: "New project" },
@@ -47,25 +47,22 @@ export function AppShell() {
 
       {/* Sidebar */}
       <aside
-        className={`hidden md:flex flex-col flex-shrink-0 border-r border-burgundy-950/[0.05] bg-white overflow-hidden transition-[width] duration-200 ease-in-out ${
-          collapsed ? "w-[60px]" : "w-[228px]"
-        }`}
+        className={`hidden md:flex flex-col flex-shrink-0 border-r border-burgundy-950/[0.05] bg-white overflow-hidden transition-[width] duration-200 ease-in-out ${collapsed ? "w-[60px]" : "w-[228px]"
+          }`}
       >
         {/* Logo row */}
         <div className="flex items-center h-[56px] px-[17px] flex-shrink-0">
           <button
             onClick={() => collapsed && setCollapsed(false)}
-            className={`w-[26px] h-[26px] rounded-[8px] flex items-center justify-center flex-shrink-0 overflow-hidden transition-colors ${
-              collapsed ? "cursor-pointer" : "cursor-default"
-            }`}
+            className={`w-[26px] h-[26px] rounded-[8px] flex items-center justify-center flex-shrink-0 overflow-hidden transition-colors ${collapsed ? "cursor-pointer" : "cursor-default"
+              }`}
             title={collapsed ? "Expand sidebar" : undefined}
           >
             <img src={logoImg} alt="SeamAI" className="w-full h-full object-cover" />
           </button>
           <span
-            className={`text-foreground tracking-tight whitespace-nowrap ml-2.5 transition-opacity duration-200 ${
-              collapsed ? "opacity-0" : "opacity-100"
-            }`}
+            className={`text-foreground tracking-tight whitespace-nowrap ml-2.5 transition-opacity duration-200 ${collapsed ? "opacity-0" : "opacity-100"
+              }`}
             style={{ fontSize: "0.9375rem", fontWeight: 600 }}
           >
             SeamAI
@@ -73,9 +70,8 @@ export function AppShell() {
           <div className="flex-1" />
           <button
             onClick={() => setCollapsed(true)}
-            className={`p-1 rounded-[6px] text-muted-foreground/50 hover:text-muted-foreground hover:bg-burgundy-950/[0.03] transition-all duration-200 cursor-pointer flex-shrink-0 ${
-              collapsed ? "opacity-0 pointer-events-none w-0 p-0" : "opacity-100"
-            }`}
+            className={`p-1 rounded-[6px] text-muted-foreground/50 hover:text-muted-foreground hover:bg-burgundy-950/[0.03] transition-all duration-200 cursor-pointer flex-shrink-0 ${collapsed ? "opacity-0 pointer-events-none w-0 p-0" : "opacity-100"
+              }`}
             title="Collapse sidebar"
           >
             <PanelLeft className="w-[15px] h-[15px]" />
@@ -100,9 +96,8 @@ export function AppShell() {
           >
             <PenLine className="w-4 h-4 flex-shrink-0" />
             <span
-              className={`text-left whitespace-nowrap transition-opacity duration-200 ${
-                collapsed ? "opacity-0 w-0 overflow-hidden" : "opacity-100 flex-1"
-              }`}
+              className={`text-left whitespace-nowrap transition-opacity duration-200 ${collapsed ? "opacity-0 w-0 overflow-hidden" : "opacity-100 flex-1"
+                }`}
             >
               New project
             </span>
@@ -131,9 +126,8 @@ export function AppShell() {
                 >
                   <item.icon className="w-[15px] h-[15px] flex-shrink-0" />
                   <span
-                    className={`text-left whitespace-nowrap transition-opacity duration-200 ${
-                      collapsed ? "opacity-0 w-0 overflow-hidden" : "opacity-100 flex-1"
-                    }`}
+                    className={`text-left whitespace-nowrap transition-opacity duration-200 ${collapsed ? "opacity-0 w-0 overflow-hidden" : "opacity-100 flex-1"
+                      }`}
                   >
                     {item.label}
                   </span>
@@ -157,9 +151,8 @@ export function AppShell() {
           >
             <Settings className="w-[15px] h-[15px] flex-shrink-0" />
             <span
-              className={`whitespace-nowrap transition-opacity duration-200 ${
-                collapsed ? "opacity-0 w-0 overflow-hidden" : "opacity-100"
-              }`}
+              className={`whitespace-nowrap transition-opacity duration-200 ${collapsed ? "opacity-0 w-0 overflow-hidden" : "opacity-100"
+                }`}
             >
               Settings
             </span>
@@ -170,9 +163,8 @@ export function AppShell() {
               <span className="text-burgundy" style={{ fontSize: "0.6875rem", fontWeight: 600 }}>EV</span>
             </div>
             <div
-              className={`min-w-0 whitespace-nowrap transition-opacity duration-200 ${
-                collapsed ? "opacity-0 w-0 overflow-hidden" : "opacity-100"
-              }`}
+              className={`min-w-0 whitespace-nowrap transition-opacity duration-200 ${collapsed ? "opacity-0 w-0 overflow-hidden" : "opacity-100"
+                }`}
             >
               <p className="text-foreground truncate" style={{ fontSize: "0.75rem", fontWeight: 500 }}>Elena Vasquez</p>
               <p className="text-muted-foreground truncate" style={{ fontSize: "0.625rem" }}>Product Lead</p>
@@ -194,9 +186,8 @@ export function AppShell() {
             <button
               key={item.path}
               onClick={() => navigate(item.path)}
-              className={`p-2 rounded-[8px] transition-colors cursor-pointer ${
-                isActive(item.path) ? "bg-burgundy-950/[0.06] text-foreground" : "text-muted-foreground"
-              }`}
+              className={`p-2 rounded-[8px] transition-colors cursor-pointer ${isActive(item.path) ? "bg-burgundy-950/[0.06] text-foreground" : "text-muted-foreground"
+                }`}
             >
               <item.icon className="w-[18px] h-[18px]" />
             </button>

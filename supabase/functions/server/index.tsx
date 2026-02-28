@@ -65,7 +65,36 @@ app.post("/make-server-2dcdbb4e/ai/analyze", async (c) => {
       );
     }
 
-    return c.json({ techPack: parsed });
+    // Generate SVG technical drawing based on the analyzed tech pack
+    let technicalDrawingSvg: string | undefined;
+    try {
+      const { generateTechnicalDrawingSvg } = await import("./claude.tsx");
+      const svgResult = await generateTechnicalDrawingSvg(
+        JSON.stringify(parsed),
+        imageBase64,
+        mediaType,
+      );
+      // Clean up the SVG — strip any markdown fences
+      const cleanedSvg = svgResult
+        .replace(/```svg\n?/g, "")
+        .replace(/```xml\n?/g, "")
+        .replace(/```html\n?/g, "")
+        .replace(/```\n?/g, "")
+        .replace(/<\?xml[^?]*\?>/g, "")
+        .trim();
+      // Validate it starts with <svg
+      if (cleanedSvg.startsWith("<svg") || cleanedSvg.startsWith("<SVG")) {
+        technicalDrawingSvg = cleanedSvg;
+        console.log(`SVG drawing generated: ${cleanedSvg.length} chars`);
+      } else {
+        console.log(`SVG drawing invalid — doesn't start with <svg>: ${cleanedSvg.substring(0, 100)}`);
+      }
+    } catch (drawErr) {
+      console.log(`SVG drawing generation failed (non-fatal): ${drawErr}`);
+      // Non-fatal — we still return the tech pack without the drawing
+    }
+
+    return c.json({ techPack: parsed, technicalDrawingSvg });
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
     console.log(`AI analyze error: ${msg}`);

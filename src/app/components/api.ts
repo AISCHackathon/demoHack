@@ -52,6 +52,7 @@ export interface AnalyzeContext {
 
 export interface AnalyzeResult {
   techPack?: Record<string, unknown>;
+  technicalDrawingSvg?: string;
   error?: string;
   raw?: string;
 }

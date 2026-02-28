@@ -17,6 +17,7 @@ export interface TechPackData {
   measurements: Measurement[];
   bom?: BOMItem[];
   annotations?: Annotation[];
+  technicalDrawingSvg?: string;
 }
 
 export interface BOMItem {

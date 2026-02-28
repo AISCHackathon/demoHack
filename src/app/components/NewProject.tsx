@@ -2,6 +2,8 @@ import { useState, useRef, useEffect, useCallback } from "react";
 import { motion } from "motion/react";
 import { useNavigate } from "react-router";
 import { analyzeImage, type AnalyzeContext } from "./api";
+import { createNewProject, addProject } from "./projectStore";
+import type { TechPackData } from "./TechPackCanvas";
 import { toast } from "sonner";
 import {
   Check,
@@ -173,32 +175,55 @@ export function NewProject() {
         await new Promise((r) => setTimeout(r, 400));
         if (cancelled) return;
 
-        // Store the result in sessionStorage for the detail page to pick up
-        if (result.techPack) {
-          sessionStorage.setItem("seamai_new_techpack", JSON.stringify(result.techPack));
-          sessionStorage.setItem("seamai_new_meta", JSON.stringify({
-            name: projectName || "Untitled Project",
-            brand: brandName || "Unknown",
-            season: season || "",
-            assignee: assignee || "",
-            image: preview,
-          }));
+        // Create a real project in the store with the AI-analyzed tech pack
+        const techPack = (result.techPack || {}) as unknown as TechPackData;
+        // Include the AI-generated SVG drawing if available
+        if (result.technicalDrawingSvg) {
+          techPack.technicalDrawingSvg = result.technicalDrawingSvg;
         }
+        const newProject = createNewProject({
+          name: projectName || techPack.garmentType || "Untitled Project",
+          brand: brandName || "Unknown",
+          season: season || "",
+          assignee: assignee || "",
+          image: preview!,
+          techPack,
+        });
+        addProject(newProject);
 
         toast("Tech pack generated successfully");
-        navigate("/projects/proj-4");
+        navigate(`/projects/${newProject.id}`);
       } catch (err) {
         if (cancelled) return;
         console.error("AI analysis failed:", err);
-        // Fallback: navigate with mock data
-        toast("AI analysis unavailable — using sample data");
+        toast("AI analysis unavailable — using default template");
         // Still advance steps for UX
         for (let i = 3; i <= 4; i++) {
           setProcessingStep(i);
           await new Promise((r) => setTimeout(r, 300));
         }
         await new Promise((r) => setTimeout(r, 500));
-        navigate("/projects/proj-4");
+
+        // Create project with empty/default tech pack so user can still edit
+        const fallbackPack: TechPackData = {
+          garmentType: garmentType || "Garment",
+          category: "Ready-to-Wear",
+          constructionDetails: "",
+          materialsTrims: "",
+          colorways: "",
+          specialInstructions: "",
+          measurements: [],
+        };
+        const newProject = createNewProject({
+          name: projectName || "Untitled Project",
+          brand: brandName || "Unknown",
+          season: season || "",
+          assignee: assignee || "",
+          image: preview!,
+          techPack: fallbackPack,
+        });
+        addProject(newProject);
+        navigate(`/projects/${newProject.id}`);
       }
 
       stepTimers.forEach(clearTimeout);
@@ -240,18 +265,16 @@ export function NewProject() {
             {steps.map((s, i) => (
               <div key={s} className="flex items-center gap-3">
                 <div
-                  className={`w-1.5 h-1.5 rounded-full flex-shrink-0 transition-all duration-400 ${
-                    i < processingStep
-                      ? "bg-burgundy-950 scale-100"
-                      : i === processingStep
+                  className={`w-1.5 h-1.5 rounded-full flex-shrink-0 transition-all duration-400 ${i < processingStep
+                    ? "bg-burgundy-950 scale-100"
+                    : i === processingStep
                       ? "bg-burgundy scale-110"
                       : "bg-burgundy-950/8"
-                  }`}
+                    }`}
                 />
                 <span
-                  className={`transition-all duration-400 ${
-                    i <= processingStep ? "text-foreground" : "text-muted-foreground/25"
-                  }`}
+                  className={`transition-all duration-400 ${i <= processingStep ? "text-foreground" : "text-muted-foreground/25"
+                    }`}
                   style={{ fontSize: "0.8125rem" }}
                 >
                   {s}
@@ -301,18 +324,16 @@ export function NewProject() {
             <div key={s} className="flex items-center gap-2 flex-1">
               <button
                 onClick={() => s < step && canAdvance(s as FlowStep) ? setStep(s as FlowStep) : undefined}
-                className={`flex items-center gap-1.5 ${
-                  s <= step ? "cursor-pointer" : "cursor-default"
-                }`}
+                className={`flex items-center gap-1.5 ${s <= step ? "cursor-pointer" : "cursor-default"
+                  }`}
               >
                 <div
-                  className={`w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 transition-colors ${
-                    s < step
-                      ? "bg-burgundy-950 text-cream"
-                      : s === step
+                  className={`w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 transition-colors ${s < step
+                    ? "bg-burgundy-950 text-cream"
+                    : s === step
                       ? "bg-burgundy-950 text-cream"
                       : "bg-burgundy-950/[0.06] text-muted-foreground/30"
-                  }`}
+                    }`}
                 >
                   {s < step ? (
                     <Check className="w-2.5 h-2.5" />
@@ -321,9 +342,8 @@ export function NewProject() {
                   )}
                 </div>
                 <span
-                  className={`hidden sm:inline transition-colors ${
-                    s <= step ? "text-foreground" : "text-muted-foreground/30"
-                  }`}
+                  className={`hidden sm:inline transition-colors ${s <= step ? "text-foreground" : "text-muted-foreground/30"
+                    }`}
                   style={{ fontSize: "0.6875rem", fontWeight: s === step ? 500 : 400 }}
                 >
                   {s === 1 ? "Upload" : s === 2 ? "Details" : "Sourcing"}
@@ -331,9 +351,8 @@ export function NewProject() {
               </button>
               {s < 3 && (
                 <div
-                  className={`flex-1 h-px transition-colors ${
-                    s < step ? "bg-burgundy-950/20" : "bg-burgundy-950/[0.06]"
-                  }`}
+                  className={`flex-1 h-px transition-colors ${s < step ? "bg-burgundy-950/20" : "bg-burgundy-950/[0.06]"
+                    }`}
                 />
               )}
             </div>
@@ -353,8 +372,8 @@ export function NewProject() {
                 ${dragOver
                   ? "border-burgundy/25 bg-burgundy/[0.02]"
                   : preview
-                  ? "border-burgundy-950/[0.06] bg-white cursor-default"
-                  : "border-dashed border-burgundy-950/[0.07] bg-white hover:border-burgundy-950/[0.14] cursor-pointer"
+                    ? "border-burgundy-950/[0.06] bg-white cursor-default"
+                    : "border-dashed border-burgundy-950/[0.07] bg-white hover:border-burgundy-950/[0.14] cursor-pointer"
                 }
               `}
             >
@@ -384,9 +403,8 @@ export function NewProject() {
               ) : (
                 <div className="flex flex-col items-center justify-center py-16 px-6">
                   <div
-                    className={`w-11 h-11 rounded-[10px] flex items-center justify-center mb-3.5 transition-all ${
-                      dragOver ? "bg-burgundy/8 scale-105" : "bg-burgundy-950/[0.025]"
-                    }`}
+                    className={`w-11 h-11 rounded-[10px] flex items-center justify-center mb-3.5 transition-all ${dragOver ? "bg-burgundy/8 scale-105" : "bg-burgundy-950/[0.025]"
+                      }`}
                   >
                     {dragOver ? (
                       <ImageIcon className="w-5 h-5 text-burgundy/60" />
@@ -508,11 +526,10 @@ export function NewProject() {
                   <button
                     key={t}
                     onClick={() => setGarmentType(garmentType === t ? "" : t)}
-                    className={`px-2.5 py-[5px] rounded-[6px] border transition-colors cursor-pointer ${
-                      garmentType === t
-                        ? "border-burgundy/20 bg-burgundy-950 text-cream"
-                        : "border-burgundy-950/[0.06] bg-white text-muted-foreground hover:text-foreground hover:border-burgundy-950/[0.10]"
-                    }`}
+                    className={`px-2.5 py-[5px] rounded-[6px] border transition-colors cursor-pointer ${garmentType === t
+                      ? "border-burgundy/20 bg-burgundy-950 text-cream"
+                      : "border-burgundy-950/[0.06] bg-white text-muted-foreground hover:text-foreground hover:border-burgundy-950/[0.10]"
+                      }`}
                     style={{ fontSize: "0.75rem" }}
                   >
                     {t}
@@ -528,11 +545,10 @@ export function NewProject() {
                   <button
                     key={pp.value}
                     onClick={() => setPricePoint(pricePoint === pp.value ? "" : pp.value)}
-                    className={`px-2 py-2 rounded-[8px] border text-center transition-colors cursor-pointer ${
-                      pricePoint === pp.value
-                        ? "border-burgundy/15 bg-burgundy-950/[0.03]"
-                        : "border-burgundy-950/[0.05] bg-white hover:border-burgundy-950/[0.10]"
-                    }`}
+                    className={`px-2 py-2 rounded-[8px] border text-center transition-colors cursor-pointer ${pricePoint === pp.value
+                      ? "border-burgundy/15 bg-burgundy-950/[0.03]"
+                      : "border-burgundy-950/[0.05] bg-white hover:border-burgundy-950/[0.10]"
+                      }`}
                   >
                     <span className="block text-foreground" style={{ fontSize: "0.75rem", fontWeight: 500 }}>
                       {pp.label}
@@ -552,11 +568,10 @@ export function NewProject() {
                   <button
                     key={a}
                     onClick={() => setAssignee(assignee === a ? "" : a)}
-                    className={`flex items-center gap-1.5 px-2.5 py-[5px] rounded-[6px] border transition-colors cursor-pointer ${
-                      assignee === a
-                        ? "border-burgundy/15 bg-burgundy-950/[0.04] text-foreground"
-                        : "border-burgundy-950/[0.06] bg-white text-muted-foreground hover:text-foreground"
-                    }`}
+                    className={`flex items-center gap-1.5 px-2.5 py-[5px] rounded-[6px] border transition-colors cursor-pointer ${assignee === a
+                      ? "border-burgundy/15 bg-burgundy-950/[0.04] text-foreground"
+                      : "border-burgundy-950/[0.06] bg-white text-muted-foreground hover:text-foreground"
+                      }`}
                     style={{ fontSize: "0.75rem" }}
                   >
                     <div className="w-4 h-4 rounded-full bg-burgundy/8 flex items-center justify-center flex-shrink-0">
@@ -608,11 +623,10 @@ export function NewProject() {
                   <button
                     key={p.id}
                     onClick={() => setSelectedPartner(selectedPartner === p.id ? "" : p.id)}
-                    className={`w-full flex items-center justify-between px-3 py-2.5 rounded-[8px] border transition-colors cursor-pointer ${
-                      selectedPartner === p.id
-                        ? "border-burgundy/15 bg-burgundy-950/[0.03]"
-                        : "border-burgundy-950/[0.05] bg-white hover:border-burgundy-950/[0.10]"
-                    }`}
+                    className={`w-full flex items-center justify-between px-3 py-2.5 rounded-[8px] border transition-colors cursor-pointer ${selectedPartner === p.id
+                      ? "border-burgundy/15 bg-burgundy-950/[0.03]"
+                      : "border-burgundy-950/[0.05] bg-white hover:border-burgundy-950/[0.10]"
+                      }`}
                   >
                     <div className="flex items-center gap-2.5">
                       <div className="w-7 h-7 rounded-[6px] bg-burgundy-950/[0.04] flex items-center justify-center">

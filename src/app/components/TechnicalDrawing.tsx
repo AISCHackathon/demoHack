@@ -80,87 +80,110 @@ const S = {
 function BlazerDrawing({ view }: { view: "front" | "back" }) {
   if (view === "front") {
     return (
-      <svg viewBox="0 0 120 170" className="w-full" style={{ maxHeight: 300 }}>
-        {/* Body outline */}
+      <svg viewBox="0 0 120 180" className="w-full" style={{ maxHeight: 320 }}>
+        {/* Body outline — tailored silhouette with slight waist suppression */}
         <path
-          d="M38 12 L32 16 Q24 22 20 35 L16 52 L14 70 L14 140 Q14 146 18 148 L48 148 L48 140 L52 140 L60 148 L60 148 L68 140 L72 140 L72 148 L102 148 Q106 146 106 140 L106 70 L104 52 L100 35 Q96 22 88 16 L82 12"
+          d="M40 14 L34 18 Q26 24 22 38 L20 50 L18 68 L16 80 L17 100 L16 130 Q16 148 18 152 L48 152 L50 146 L56 150 L60 152 L64 150 L70 146 L72 152 L102 152 Q104 148 104 130 L103 100 L104 80 L102 68 L100 50 L98 38 Q94 24 86 18 L80 14"
           stroke={S.stroke} strokeWidth={S.strokeWidth} fill={S.fill} strokeLinejoin="round"
         />
         {/* Shoulders */}
-        <path d="M38 12 Q50 8 60 8 Q70 8 82 12" stroke={S.stroke} strokeWidth={S.strokeWidth} fill={S.fill} />
+        <path d="M40 14 Q50 9 60 9 Q70 9 80 14" stroke={S.stroke} strokeWidth={S.strokeWidth} fill={S.fill} />
         {/* Neckline */}
-        <path d="M38 12 Q42 6 48 4 Q54 2 60 3 Q66 2 72 4 Q78 6 82 12" stroke={S.stroke} strokeWidth={S.strokeWidth} fill={S.fill} />
-        {/* Lapel left */}
-        <path d="M48 4 L44 18 L38 30 L50 50 L56 38 L60 28" stroke={S.stroke} strokeWidth={S.strokeWidth} fill={S.fill} />
-        {/* Lapel right */}
-        <path d="M72 4 L76 18 L82 30 L70 50 L64 38 L60 28" stroke={S.stroke} strokeWidth={S.strokeWidth} fill={S.fill} />
-        {/* Lapel fold line */}
-        <line x1="44" y1="18" x2="56" y2="38" {...S.fold} />
-        <line x1="76" y1="18" x2="64" y2="38" {...S.fold} />
+        <path d="M40 14 Q44 8 48 5 Q54 3 60 4 Q66 3 72 5 Q76 8 80 14" stroke={S.stroke} strokeWidth={S.strokeWidth} fill={S.fill} />
+        {/* Notched lapel — left (prominent V-notch) */}
+        <path d="M48 5 L46 14 L42 24 L38 30 L36 26 L32 22" stroke={S.stroke} strokeWidth={S.strokeWidth} fill={S.fill} strokeLinejoin="round" />
+        <path d="M38 30 L48 52 L56 40 L60 30" stroke={S.stroke} strokeWidth={S.strokeWidth} fill={S.fill} strokeLinejoin="round" />
+        {/* Notched lapel — right (prominent V-notch) */}
+        <path d="M72 5 L74 14 L78 24 L82 30 L84 26 L88 22" stroke={S.stroke} strokeWidth={S.strokeWidth} fill={S.fill} strokeLinejoin="round" />
+        <path d="M82 30 L72 52 L64 40 L60 30" stroke={S.stroke} strokeWidth={S.strokeWidth} fill={S.fill} strokeLinejoin="round" />
+        {/* Lapel roll line */}
+        <line x1="46" y1="14" x2="56" y2="40" {...S.fold} />
+        <line x1="74" y1="14" x2="64" y2="40" {...S.fold} />
         {/* Center front line */}
-        <line x1="60" y1="28" x2="60" y2="148" {...S.fold} />
-        {/* Buttons */}
-        <circle cx="60" cy="72" r="2.2" stroke={S.stroke} strokeWidth={0.6} fill={S.fill} />
-        <circle cx="60" cy="92" r="2.2" stroke={S.stroke} strokeWidth={0.6} fill={S.fill} />
-        {/* Left sleeve */}
-        <path d="M20 35 L6 48 L4 62 L8 66 L14 70" stroke={S.stroke} strokeWidth={S.strokeWidth} fill={S.fill} strokeLinejoin="round" />
-        {/* Right sleeve */}
-        <path d="M100 35 L114 48 L116 62 L112 66 L106 70" stroke={S.stroke} strokeWidth={S.strokeWidth} fill={S.fill} strokeLinejoin="round" />
-        {/* Sleeve cuff buttons */}
-        <circle cx="9" cy="62" r="1" {...S.detail} fill={S.fill} />
-        <circle cx="9" cy="58" r="1" {...S.detail} fill={S.fill} />
-        <circle cx="9" cy="54" r="1" {...S.detail} fill={S.fill} />
-        <circle cx="111" cy="62" r="1" {...S.detail} fill={S.fill} />
-        <circle cx="111" cy="58" r="1" {...S.detail} fill={S.fill} />
-        <circle cx="111" cy="54" r="1" {...S.detail} fill={S.fill} />
-        {/* Chest pocket */}
-        <path d="M68 46 L80 46 L80 56 L68 56 Z" {...S.detail} fill={S.fill} />
-        <line x1="68" y1="46" x2="80" y2="46" stroke={S.stroke} strokeWidth={0.6} />
-        {/* Flap pockets */}
-        <path d="M22 100 L46 100 L46 102 L22 102 Z" stroke={S.stroke} strokeWidth={0.5} fill={S.fill} />
-        <path d="M74 100 L98 100 L98 102 L74 102 Z" stroke={S.stroke} strokeWidth={0.5} fill={S.fill} />
+        <line x1="60" y1="30" x2="60" y2="152" {...S.fold} />
+        {/* Two-button front */}
+        <circle cx="60" cy="78" r="2.2" stroke={S.stroke} strokeWidth={0.6} fill={S.fill} />
+        <circle cx="60" cy="96" r="2.2" stroke={S.stroke} strokeWidth={0.6} fill={S.fill} />
+        {/* Left sleeve — FULL LENGTH set-in sleeve */}
+        <path
+          d="M22 38 L10 52 L4 80 L2 105 L4 120 Q6 126 10 128 L18 128 L20 126 L22 120"
+          stroke={S.stroke} strokeWidth={S.strokeWidth} fill={S.fill} strokeLinejoin="round"
+        />
+        {/* Left sleeve connects to body at armhole */}
+        <line x1="22" y1="120" x2="18" y2="68" {...S.fold} opacity={0} />
+        {/* Right sleeve — FULL LENGTH set-in sleeve */}
+        <path
+          d="M98 38 L110 52 L116 80 L118 105 L116 120 Q114 126 110 128 L102 128 L100 126 L98 120"
+          stroke={S.stroke} strokeWidth={S.strokeWidth} fill={S.fill} strokeLinejoin="round"
+        />
+        {/* Sleeve cuff buttons — left (4 kissing buttons) */}
+        <circle cx="10" cy="118" r="1" {...S.detail} fill={S.fill} />
+        <circle cx="10" cy="114" r="1" {...S.detail} fill={S.fill} />
+        <circle cx="10" cy="110" r="1" {...S.detail} fill={S.fill} />
+        <circle cx="10" cy="106" r="1" {...S.detail} fill={S.fill} />
+        {/* Sleeve cuff buttons — right */}
+        <circle cx="110" cy="118" r="1" {...S.detail} fill={S.fill} />
+        <circle cx="110" cy="114" r="1" {...S.detail} fill={S.fill} />
+        <circle cx="110" cy="110" r="1" {...S.detail} fill={S.fill} />
+        <circle cx="110" cy="106" r="1" {...S.detail} fill={S.fill} />
+        {/* Welt chest pocket (left chest) */}
+        <line x1="66" y1="50" x2="80" y2="50" stroke={S.stroke} strokeWidth={0.6} />
+        <path d="M66 50 L66 52 L80 52 L80 50" {...S.detail} />
+        {/* Flap hip pockets */}
+        <path d="M24 106 L46 106 L46 108 L24 108 Z" stroke={S.stroke} strokeWidth={0.5} fill={S.fill} />
+        <path d="M24 108 L46 108 L46 118 L24 118 Z" {...S.detail} fill={S.fill} />
+        <path d="M74 106 L96 106 L96 108 L74 108 Z" stroke={S.stroke} strokeWidth={0.5} fill={S.fill} />
+        <path d="M74 108 L96 108 L96 118 L74 118 Z" {...S.detail} fill={S.fill} />
         {/* Shoulder seam stitching */}
-        <line x1="38" y1="12" x2="20" y2="35" {...S.stitch} />
-        <line x1="82" y1="12" x2="100" y2="35" {...S.stitch} />
+        <line x1="40" y1="14" x2="22" y2="38" {...S.stitch} />
+        <line x1="80" y1="14" x2="98" y2="38" {...S.stitch} />
         {/* Side seam stitching */}
-        <line x1="14" y1="70" x2="14" y2="140" {...S.stitch} />
-        <line x1="106" y1="70" x2="106" y2="140" {...S.stitch} />
-        {/* Waist dart hint */}
-        <line x1="32" y1="70" x2="34" y2="88" {...S.stitch} />
-        <line x1="88" y1="70" x2="86" y2="88" {...S.stitch} />
+        <line x1="18" y1="68" x2="16" y2="130" {...S.stitch} />
+        <line x1="102" y1="68" x2="104" y2="130" {...S.stitch} />
+        {/* Waist suppression darts */}
+        <line x1="34" y1="72" x2="36" y2="96" {...S.stitch} />
+        <line x1="86" y1="72" x2="84" y2="96" {...S.stitch} />
       </svg>
     );
   }
   return (
-    <svg viewBox="0 0 120 170" className="w-full" style={{ maxHeight: 300 }}>
-      {/* Body outline */}
+    <svg viewBox="0 0 120 180" className="w-full" style={{ maxHeight: 320 }}>
+      {/* Body outline — back */}
       <path
-        d="M38 12 L32 16 Q24 22 20 35 L16 52 L14 70 L14 140 Q14 146 18 148 L102 148 Q106 146 106 140 L106 70 L104 52 L100 35 Q96 22 88 16 L82 12"
+        d="M40 14 L34 18 Q26 24 22 38 L20 50 L18 68 L16 80 L17 100 L16 130 Q16 148 18 152 L102 152 Q104 148 104 130 L103 100 L104 80 L102 68 L100 50 L98 38 Q94 24 86 18 L80 14"
         stroke={S.stroke} strokeWidth={S.strokeWidth} fill={S.fill} strokeLinejoin="round"
       />
-      {/* Shoulders + neckline */}
-      <path d="M38 12 Q50 8 60 8 Q70 8 82 12" stroke={S.stroke} strokeWidth={S.strokeWidth} fill={S.fill} />
-      <path d="M38 12 Q48 9 60 10 Q72 9 82 12" stroke={S.stroke} strokeWidth={0.5} fill={S.fill} />
+      {/* Shoulders + higher back neckline */}
+      <path d="M40 14 Q50 9 60 9 Q70 9 80 14" stroke={S.stroke} strokeWidth={S.strokeWidth} fill={S.fill} />
+      <path d="M40 14 Q50 11 60 11 Q70 11 80 14" stroke={S.stroke} strokeWidth={0.5} fill={S.fill} />
       {/* Center back seam */}
-      <line x1="60" y1="10" x2="60" y2="148" {...S.fold} />
+      <line x1="60" y1="11" x2="60" y2="152" {...S.fold} />
       {/* Back vent */}
-      <line x1="60" y1="115" x2="60" y2="148" stroke={S.stroke} strokeWidth={0.6} />
-      <line x1="57" y1="115" x2="63" y2="115" {...S.detail} />
-      {/* Left sleeve */}
-      <path d="M20 35 L6 48 L4 62 L8 66 L14 70" stroke={S.stroke} strokeWidth={S.strokeWidth} fill={S.fill} strokeLinejoin="round" />
-      {/* Right sleeve */}
-      <path d="M100 35 L114 48 L116 62 L112 66 L106 70" stroke={S.stroke} strokeWidth={S.strokeWidth} fill={S.fill} strokeLinejoin="round" />
+      <line x1="60" y1="120" x2="60" y2="152" stroke={S.stroke} strokeWidth={0.6} />
+      <line x1="57" y1="120" x2="63" y2="120" {...S.detail} />
+      {/* Left sleeve — full length */}
+      <path
+        d="M22 38 L10 52 L4 80 L2 105 L4 120 Q6 126 10 128 L18 128 L20 126 L22 120"
+        stroke={S.stroke} strokeWidth={S.strokeWidth} fill={S.fill} strokeLinejoin="round"
+      />
+      {/* Right sleeve — full length */}
+      <path
+        d="M98 38 L110 52 L116 80 L118 105 L116 120 Q114 126 110 128 L102 128 L100 126 L98 120"
+        stroke={S.stroke} strokeWidth={S.strokeWidth} fill={S.fill} strokeLinejoin="round"
+      />
       {/* Shoulder seams */}
-      <line x1="38" y1="12" x2="20" y2="35" {...S.stitch} />
-      <line x1="82" y1="12" x2="100" y2="35" {...S.stitch} />
+      <line x1="40" y1="14" x2="22" y2="38" {...S.stitch} />
+      <line x1="80" y1="14" x2="98" y2="38" {...S.stitch} />
       {/* Side seams */}
-      <line x1="14" y1="70" x2="14" y2="140" {...S.stitch} />
-      <line x1="106" y1="70" x2="106" y2="140" {...S.stitch} />
+      <line x1="18" y1="68" x2="16" y2="130" {...S.stitch} />
+      <line x1="102" y1="68" x2="104" y2="130" {...S.stitch} />
       {/* Back yoke seam */}
-      <line x1="20" y1="35" x2="100" y2="35" {...S.stitch} />
+      <path d="M22 38 Q60 34 98 38" {...S.stitch} />
       {/* Back darts */}
-      <line x1="38" y1="38" x2="40" y2="80" {...S.stitch} />
-      <line x1="82" y1="38" x2="80" y2="80" {...S.stitch} />
+      <line x1="40" y1="40" x2="42" y2="86" {...S.stitch} />
+      <line x1="80" y1="40" x2="78" y2="86" {...S.stitch} />
+      {/* Back seam label */}
+      <rect x="54" y="14" width="12" height="5" rx="0.5" {...S.detail} />
     </svg>
   );
 }

@@ -1,18 +1,20 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import { PenLine, Search, LayoutGrid, List, ArrowUpRight } from "lucide-react";
-import { sampleProjects, stageConfig, stageOrder, type ProjectStage } from "./data";
+import { stageConfig, stageOrder, type ProjectStage } from "./data";
+import { getAllProjects } from "./projectStore";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
 
 type ViewMode = "grid" | "list";
 
 export function ProjectsList() {
   const navigate = useNavigate();
+  const allProjects = getAllProjects();
   const [search, setSearch] = useState("");
   const [activeFilter, setActiveFilter] = useState<ProjectStage | "all">("all");
   const [viewMode, setViewMode] = useState<ViewMode>("grid");
 
-  const filtered = sampleProjects.filter((p) => {
+  const filtered = allProjects.filter((p) => {
     const matchesSearch =
       p.name.toLowerCase().includes(search.toLowerCase()) ||
       p.brand.toLowerCase().includes(search.toLowerCase());
@@ -30,7 +32,7 @@ export function ProjectsList() {
               Projects
             </h1>
             <p className="text-muted-foreground mt-0.5" style={{ fontSize: "0.8125rem" }}>
-              {sampleProjects.length} total · {sampleProjects.filter((p) => p.stage !== "complete").length} active
+              {allProjects.length} total · {allProjects.filter((p) => p.stage !== "complete").length} active
             </p>
           </div>
           <button
@@ -56,12 +58,12 @@ export function ProjectsList() {
             />
           </div>
           <div className="flex items-center gap-1 flex-wrap flex-1">
-            <FilterPill label="All" count={sampleProjects.length} active={activeFilter === "all"} onClick={() => setActiveFilter("all")} />
+            <FilterPill label="All" count={allProjects.length} active={activeFilter === "all"} onClick={() => setActiveFilter("all")} />
             {stageOrder.map((stage) => (
               <FilterPill
                 key={stage}
                 label={stageConfig[stage].label}
-                count={sampleProjects.filter((p) => p.stage === stage).length}
+                count={allProjects.filter((p) => p.stage === stage).length}
                 active={activeFilter === stage}
                 onClick={() => setActiveFilter(activeFilter === stage ? "all" : stage)}
               />
@@ -194,11 +196,10 @@ function FilterPill({ label, count, active, onClick }: { label: string; count: n
   return (
     <button
       onClick={onClick}
-      className={`px-2.5 py-1 rounded-[6px] transition-all cursor-pointer flex items-center gap-1.5 ${
-        active
+      className={`px-2.5 py-1 rounded-[6px] transition-all cursor-pointer flex items-center gap-1.5 ${active
           ? "bg-burgundy-950/[0.06] text-foreground"
           : "text-muted-foreground hover:text-foreground hover:bg-burgundy-950/[0.02]"
-      }`}
+        }`}
       style={{ fontSize: "0.75rem" }}
     >
       {label}

@@ -2,8 +2,8 @@ import { useState, useRef, useEffect } from "react";
 import { useParams, useNavigate } from "react-router";
 import { ArrowLeft, Download, ChevronRight, BookOpen, Check, Image, Ruler } from "lucide-react";
 import { toast } from "sonner";
-import { sampleProjects, stageConfig, stageOrder, type ProjectStage } from "./data";
-import { generateMockTechPack } from "./mockTechPackData";
+import { stageConfig, stageOrder, type ProjectStage } from "./data";
+import { getProject, updateProject as storeUpdateProject } from "./projectStore";
 import { EditableField } from "./EditableField";
 import { MeasurementsTable, type Measurement } from "./MeasurementsTable";
 import { AnnotationLayer } from "./AnnotationLayer";
@@ -42,20 +42,17 @@ const sectionLabels: Record<string, string> = {
 export function ProjectDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const project = sampleProjects.find((p) => p.id === id);
+  const project = getProject(id || "");
   const [data, setData] = useState<TechPackData>(() => {
-    // Check for AI-generated tech pack from NewProject flow
-    const stored = sessionStorage.getItem("seamai_new_techpack");
-    if (stored && id === "proj-4") {
-      try {
-        sessionStorage.removeItem("seamai_new_techpack");
-        const parsed = JSON.parse(stored);
-        return parsed as TechPackData;
-      } catch {
-        // Fall through to default
-      }
-    }
-    return project?.techPack || generateMockTechPack(project?.brand || "");
+    return project?.techPack || {
+      garmentType: "Garment",
+      category: "Ready-to-Wear",
+      constructionDetails: "",
+      materialsTrims: "",
+      colorways: "",
+      specialInstructions: "",
+      measurements: [],
+    };
   });
   const [activeSection, setActiveSection] = useState("identification");
   const [stage, setStage] = useState<ProjectStage>(project?.stage || "tech_pack");
@@ -91,7 +88,12 @@ export function ProjectDetail() {
 
   // Auto-save simulation
   const updateField = (field: keyof TechPackData, value: string | Measurement[] | BOMItem[] | Annotation[]) => {
-    setData((prev) => ({ ...prev, [field]: value }));
+    setData((prev) => {
+      const updated = { ...prev, [field]: value };
+      // Persist edits to the store
+      if (id) storeUpdateProject(id, { techPack: updated });
+      return updated;
+    });
     setSaveStatus("saving");
     if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
     saveTimerRef.current = setTimeout(() => setSaveStatus("saved"), 800);
@@ -252,9 +254,8 @@ export function ProjectDetail() {
           <div className="w-px h-3.5 bg-burgundy-950/[0.06] hidden sm:block" />
           <button
             onClick={() => setShowBrandMemory(!showBrandMemory)}
-            className={`p-1.5 rounded-[6px] transition-all cursor-pointer ${
-              showBrandMemory ? "bg-burgundy/8 text-burgundy" : "text-muted-foreground/40 hover:text-foreground hover:bg-burgundy-950/[0.04]"
-            }`}
+            className={`p-1.5 rounded-[6px] transition-all cursor-pointer ${showBrandMemory ? "bg-burgundy/8 text-burgundy" : "text-muted-foreground/40 hover:text-foreground hover:bg-burgundy-950/[0.04]"
+              }`}
             title="Brand defaults"
           >
             <BookOpen className="w-[15px] h-[15px]" />
@@ -280,17 +281,15 @@ export function ProjectDetail() {
               <button
                 key={key}
                 onClick={() => scrollToSection(key)}
-                className={`w-full text-left px-2.5 py-[6px] rounded-[6px] transition-all cursor-pointer flex items-center gap-2 ${
-                  activeSection === key
-                    ? "bg-burgundy-950/[0.05] text-foreground"
-                    : "text-muted-foreground/60 hover:text-foreground hover:bg-burgundy-950/[0.02]"
-                }`}
+                className={`w-full text-left px-2.5 py-[6px] rounded-[6px] transition-all cursor-pointer flex items-center gap-2 ${activeSection === key
+                  ? "bg-burgundy-950/[0.05] text-foreground"
+                  : "text-muted-foreground/60 hover:text-foreground hover:bg-burgundy-950/[0.02]"
+                  }`}
                 style={{ fontSize: "0.8125rem" }}
               >
                 <div
-                  className={`w-[3px] h-[3px] rounded-full flex-shrink-0 transition-all ${
-                    activeSection === key ? "bg-burgundy" : "bg-transparent"
-                  }`}
+                  className={`w-[3px] h-[3px] rounded-full flex-shrink-0 transition-all ${activeSection === key ? "bg-burgundy" : "bg-transparent"
+                    }`}
                 />
                 {sectionLabels[key]}
               </button>
@@ -313,11 +312,10 @@ export function ProjectDetail() {
           <div className="flex items-center border-b border-burgundy-950/[0.04] px-3 flex-shrink-0">
             <button
               onClick={() => setImagePanelView("photo")}
-              className={`flex items-center gap-1.5 px-3 py-2.5 border-b-2 transition-colors cursor-pointer ${
-                imagePanelView === "photo"
-                  ? "border-burgundy-950 text-foreground"
-                  : "border-transparent text-muted-foreground hover:text-foreground"
-              }`}
+              className={`flex items-center gap-1.5 px-3 py-2.5 border-b-2 transition-colors cursor-pointer ${imagePanelView === "photo"
+                ? "border-burgundy-950 text-foreground"
+                : "border-transparent text-muted-foreground hover:text-foreground"
+                }`}
               style={{ fontSize: "0.75rem" }}
             >
               <Image className="w-3 h-3" />
@@ -325,11 +323,10 @@ export function ProjectDetail() {
             </button>
             <button
               onClick={() => setImagePanelView("technical")}
-              className={`flex items-center gap-1.5 px-3 py-2.5 border-b-2 transition-colors cursor-pointer ${
-                imagePanelView === "technical"
-                  ? "border-burgundy-950 text-foreground"
-                  : "border-transparent text-muted-foreground hover:text-foreground"
-              }`}
+              className={`flex items-center gap-1.5 px-3 py-2.5 border-b-2 transition-colors cursor-pointer ${imagePanelView === "technical"
+                ? "border-burgundy-950 text-foreground"
+                : "border-transparent text-muted-foreground hover:text-foreground"
+                }`}
               style={{ fontSize: "0.75rem" }}
             >
               <Ruler className="w-3 h-3" />
@@ -348,7 +345,14 @@ export function ProjectDetail() {
           ) : (
             <div className="flex-1 flex flex-col overflow-y-auto">
               <div className="flex-1 flex items-center justify-center p-8">
-                <TechnicalDrawing garmentType={data.garmentType} className="w-full" />
+                {data.technicalDrawingSvg ? (
+                  <div
+                    className="w-full max-w-[520px]"
+                    dangerouslySetInnerHTML={{ __html: data.technicalDrawingSvg }}
+                  />
+                ) : (
+                  <TechnicalDrawing garmentType={data.garmentType} className="w-full" />
+                )}
               </div>
               <div className="px-4 pb-4 flex-shrink-0">
                 <div className="rounded-[8px] bg-burgundy-950/[0.015] border border-burgundy-950/[0.04] px-3 py-2.5">
@@ -356,7 +360,10 @@ export function ProjectDetail() {
                     {data.garmentType}
                   </p>
                   <p className="text-muted-foreground/60 mt-0.5" style={{ fontSize: "0.625rem" }}>
-                    AI-generated flat sketch · Front and back views · Verify construction details match spec
+                    {data.technicalDrawingSvg
+                      ? "AI-generated custom flat sketch · Based on uploaded image and spec analysis"
+                      : "AI-generated flat sketch · Front and back views · Verify construction details match spec"
+                    }
                   </p>
                 </div>
               </div>
@@ -389,9 +396,8 @@ export function ProjectDetail() {
                   return (
                     <div
                       key={s}
-                      className={`h-[3px] flex-1 rounded-full transition-all duration-300 ${
-                        isComplete ? "bg-burgundy-950" : "bg-burgundy-950/[0.05]"
-                      }`}
+                      className={`h-[3px] flex-1 rounded-full transition-all duration-300 ${isComplete ? "bg-burgundy-950" : "bg-burgundy-950/[0.05]"
+                        }`}
                     />
                   );
                 })}

@@ -1,18 +1,20 @@
 import { useNavigate } from "react-router";
 import { PenLine, ArrowRight, TrendingUp, Clock, CheckCircle2 } from "lucide-react";
-import { sampleProjects, stageConfig, stageOrder, type ProjectStage } from "./data";
+import { stageConfig, stageOrder, type ProjectStage } from "./data";
+import { getAllProjects } from "./projectStore";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
 
 export function Dashboard() {
   const navigate = useNavigate();
+  const allProjects = getAllProjects();
 
   const pipelineCounts = stageOrder.reduce((acc, stage) => {
-    acc[stage] = sampleProjects.filter((p) => p.stage === stage).length;
+    acc[stage] = allProjects.filter((p) => p.stage === stage).length;
     return acc;
   }, {} as Record<ProjectStage, number>);
 
-  const activeProjects = sampleProjects.filter((p) => p.stage !== "complete");
-  const recentProjects = [...sampleProjects]
+  const activeProjects = allProjects.filter((p) => p.stage !== "complete");
+  const recentProjects = [...allProjects]
     .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())
     .slice(0, 5);
 
@@ -50,7 +52,7 @@ export function Dashboard() {
           <StatCard
             icon={<TrendingUp className="w-3.5 h-3.5" />}
             label="Tech packs"
-            value={String(sampleProjects.length)}
+            value={String(allProjects.length)}
             sub="generated"
           />
           <StatCard
@@ -70,7 +72,7 @@ export function Dashboard() {
             {stageOrder.map((stage, i) => {
               const config = stageConfig[stage];
               const count = pipelineCounts[stage];
-              const total = sampleProjects.length;
+              const total = allProjects.length;
               const pct = total > 0 ? (count / total) * 100 : 0;
               return (
                 <button
