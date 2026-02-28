@@ -37,16 +37,20 @@ export function TechnicalDrawing({ garmentType, className = "" }: TechnicalDrawi
 
 /* ── Garment classification ── */
 
-type GarmentKey = "blazer" | "tshirt" | "dress" | "trousers" | "jacket" | "knitwear" | "generic";
+type GarmentKey = "blazer" | "tshirt" | "dress" | "trousers" | "jacket" | "knitwear" | "shirt" | "vest" | "hoodie" | "shorts" | "generic";
 
 function classifyGarment(garmentType: string): GarmentKey {
   const t = garmentType.toLowerCase();
   if (t.includes("blazer") || t.includes("suit")) return "blazer";
-  if (t.includes("t-shirt") || t.includes("tee") || t.includes("crew neck t")) return "tshirt";
+  if (t.includes("hoodie") || t.includes("hooded")) return "hoodie";
+  if (t.includes("vest") || t.includes("waistcoat") || t.includes("gilet")) return "vest";
+  if (t.includes("t-shirt") || t.includes("tee") || t.includes("crew neck t") || t.includes("tank")) return "tshirt";
+  if (t.includes("shirt") || t.includes("button-down") || t.includes("button down") || t.includes("oxford") || t.includes("polo") || t.includes("blouse")) return "shirt";
   if (t.includes("dress") || t.includes("skirt")) return "dress";
-  if (t.includes("trouser") || t.includes("chino") || t.includes("pant") || t.includes("short")) return "trousers";
-  if (t.includes("jacket") || t.includes("coat") || t.includes("trucker") || t.includes("hoodie") || t.includes("denim")) return "jacket";
-  if (t.includes("knit") || t.includes("sweater") || t.includes("merino") || t.includes("crewneck") || t.includes("pullover")) return "knitwear";
+  if (t.includes("short") && !t.includes("sleeve")) return "shorts";
+  if (t.includes("trouser") || t.includes("chino") || t.includes("pant") || t.includes("jean") || t.includes("jogger")) return "trousers";
+  if (t.includes("jacket") || t.includes("coat") || t.includes("trucker") || t.includes("denim") || t.includes("bomber") || t.includes("parka") || t.includes("anorak")) return "jacket";
+  if (t.includes("knit") || t.includes("sweater") || t.includes("merino") || t.includes("crewneck") || t.includes("pullover") || t.includes("cardigan")) return "knitwear";
   return "generic";
 }
 
@@ -583,6 +587,259 @@ function KnitwearDrawing({ view }: { view: "front" | "back" }) {
   );
 }
 
+/* ── Shirt (button-down) ── */
+
+function ShirtDrawing({ view }: { view: "front" | "back" }) {
+  if (view === "front") {
+    return (
+      <svg viewBox="0 0 120 170" className="w-full" style={{ maxHeight: 300 }}>
+        {/* Body */}
+        <path
+          d="M40 14 L28 20 L22 32 L18 50 L16 70 L16 140 Q16 146 20 148 L100 148 Q104 146 104 140 L104 70 L102 50 L98 32 L92 20 L80 14"
+          stroke={S.stroke} strokeWidth={S.strokeWidth} fill={S.fill} strokeLinejoin="round"
+        />
+        {/* Collar band */}
+        <path d="M40 14 Q48 8 60 8 Q72 8 80 14" stroke={S.stroke} strokeWidth={S.strokeWidth} fill={S.fill} />
+        {/* Collar points */}
+        <path d="M40 14 L38 10 L44 6 L48 8" stroke={S.stroke} strokeWidth={0.7} fill={S.fill} />
+        <path d="M80 14 L82 10 L76 6 L72 8" stroke={S.stroke} strokeWidth={0.7} fill={S.fill} />
+        {/* Button placket */}
+        <line x1="60" y1="8" x2="60" y2="148" {...S.fold} />
+        <line x1="58" y1="14" x2="58" y2="148" {...S.detail} />
+        <line x1="62" y1="14" x2="62" y2="148" {...S.detail} />
+        {/* Buttons */}
+        {[28, 44, 60, 76, 92, 108, 124].map((y) => (
+          <circle key={y} cx="60" cy={y} r="1.5" stroke={S.stroke} strokeWidth={0.5} fill={S.fill} />
+        ))}
+        {/* Left sleeve */}
+        <path d="M22 32 L6 48 L2 80 L4 100 Q6 106 10 108 L18 108 L20 106 L22 100" stroke={S.stroke} strokeWidth={S.strokeWidth} fill={S.fill} strokeLinejoin="round" />
+        {/* Right sleeve */}
+        <path d="M98 32 L114 48 L118 80 L116 100 Q114 106 110 108 L102 108 L100 106 L98 100" stroke={S.stroke} strokeWidth={S.strokeWidth} fill={S.fill} strokeLinejoin="round" />
+        {/* Chest pocket */}
+        <path d="M68 44 L80 44 L80 56 L68 56 Z" {...S.detail} fill={S.fill} />
+        <line x1="68" y1="44" x2="80" y2="44" stroke={S.stroke} strokeWidth={0.6} />
+        {/* Shoulder seams */}
+        <line x1="40" y1="14" x2="22" y2="32" {...S.stitch} />
+        <line x1="80" y1="14" x2="98" y2="32" {...S.stitch} />
+        {/* Side seams */}
+        <line x1="16" y1="70" x2="16" y2="140" {...S.stitch} />
+        <line x1="104" y1="70" x2="104" y2="140" {...S.stitch} />
+        {/* Yoke seam */}
+        <line x1="22" y1="32" x2="98" y2="32" {...S.stitch} />
+        {/* Cuff stitch */}
+        <line x1="4" y1="104" x2="18" y2="104" {...S.stitch} />
+        <line x1="102" y1="104" x2="116" y2="104" {...S.stitch} />
+        {/* Hem */}
+        <line x1="16" y1="145" x2="104" y2="145" {...S.stitch} />
+      </svg>
+    );
+  }
+  return (
+    <svg viewBox="0 0 120 170" className="w-full" style={{ maxHeight: 300 }}>
+      <path
+        d="M40 14 L28 20 L22 32 L18 50 L16 70 L16 140 Q16 146 20 148 L100 148 Q104 146 104 140 L104 70 L102 50 L98 32 L92 20 L80 14"
+        stroke={S.stroke} strokeWidth={S.strokeWidth} fill={S.fill} strokeLinejoin="round"
+      />
+      <path d="M40 14 Q48 10 60 10 Q72 10 80 14" stroke={S.stroke} strokeWidth={S.strokeWidth} fill={S.fill} />
+      <line x1="60" y1="10" x2="60" y2="148" {...S.fold} />
+      {/* Back yoke */}
+      <line x1="22" y1="32" x2="98" y2="32" stroke={S.stroke} strokeWidth={0.6} />
+      {/* Sleeves */}
+      <path d="M22 32 L6 48 L2 80 L4 100 Q6 106 10 108 L18 108 L20 106 L22 100" stroke={S.stroke} strokeWidth={S.strokeWidth} fill={S.fill} strokeLinejoin="round" />
+      <path d="M98 32 L114 48 L118 80 L116 100 Q114 106 110 108 L102 108 L100 106 L98 100" stroke={S.stroke} strokeWidth={S.strokeWidth} fill={S.fill} strokeLinejoin="round" />
+      {/* Back box pleat */}
+      <line x1="52" y1="32" x2="52" y2="80" {...S.fold} />
+      <line x1="68" y1="32" x2="68" y2="80" {...S.fold} />
+      <line x1="40" y1="14" x2="22" y2="32" {...S.stitch} />
+      <line x1="80" y1="14" x2="98" y2="32" {...S.stitch} />
+      <line x1="16" y1="70" x2="16" y2="140" {...S.stitch} />
+      <line x1="104" y1="70" x2="104" y2="140" {...S.stitch} />
+      <rect x="54" y="14" width="12" height="5" rx="0.5" {...S.detail} />
+      <line x1="16" y1="145" x2="104" y2="145" {...S.stitch} />
+    </svg>
+  );
+}
+
+/* ── Vest / Waistcoat ── */
+
+function VestDrawing({ view }: { view: "front" | "back" }) {
+  if (view === "front") {
+    return (
+      <svg viewBox="0 0 100 160" className="w-full" style={{ maxHeight: 280 }}>
+        <path
+          d="M30 12 L24 18 L20 30 L18 50 L18 130 Q18 136 22 138 L78 138 Q82 136 82 130 L82 50 L80 30 L76 18 L70 12"
+          stroke={S.stroke} strokeWidth={S.strokeWidth} fill={S.fill} strokeLinejoin="round"
+        />
+        {/* V-neck opening */}
+        <path d="M30 12 Q38 6 50 6 Q62 6 70 12" stroke={S.stroke} strokeWidth={S.strokeWidth} fill={S.fill} />
+        <path d="M30 12 L40 40 L50 50" stroke={S.stroke} strokeWidth={S.strokeWidth} fill={S.fill} />
+        <path d="M70 12 L60 40 L50 50" stroke={S.stroke} strokeWidth={S.strokeWidth} fill={S.fill} />
+        {/* Armholes */}
+        <path d="M24 18 L20 30 L18 50" stroke={S.stroke} strokeWidth={S.strokeWidth} fill={S.fill} />
+        <path d="M76 18 L80 30 L82 50" stroke={S.stroke} strokeWidth={S.strokeWidth} fill={S.fill} />
+        {/* Center front */}
+        <line x1="50" y1="50" x2="50" y2="138" {...S.fold} />
+        {/* Buttons */}
+        {[58, 72, 86, 100, 114].map((y) => (
+          <circle key={y} cx="50" cy={y} r="1.8" stroke={S.stroke} strokeWidth={0.5} fill={S.fill} />
+        ))}
+        {/* Welt pockets */}
+        <line x1="24" y1="90" x2="44" y2="90" stroke={S.stroke} strokeWidth={0.6} />
+        <line x1="56" y1="90" x2="76" y2="90" stroke={S.stroke} strokeWidth={0.6} />
+        {/* Side seams */}
+        <line x1="18" y1="50" x2="18" y2="130" {...S.stitch} />
+        <line x1="82" y1="50" x2="82" y2="130" {...S.stitch} />
+        {/* Hem */}
+        <line x1="18" y1="135" x2="82" y2="135" {...S.stitch} />
+      </svg>
+    );
+  }
+  return (
+    <svg viewBox="0 0 100 160" className="w-full" style={{ maxHeight: 280 }}>
+      <path
+        d="M30 12 L24 18 L20 30 L18 50 L18 130 Q18 136 22 138 L78 138 Q82 136 82 130 L82 50 L80 30 L76 18 L70 12"
+        stroke={S.stroke} strokeWidth={S.strokeWidth} fill={S.fill} strokeLinejoin="round"
+      />
+      <path d="M30 12 Q38 9 50 9 Q62 9 70 12" stroke={S.stroke} strokeWidth={S.strokeWidth} fill={S.fill} />
+      <line x1="50" y1="9" x2="50" y2="138" {...S.fold} />
+      {/* Back strap/buckle */}
+      <path d="M40 90 Q50 86 60 90" {...S.detail} />
+      {/* Back darts */}
+      <line x1="36" y1="30" x2="38" y2="80" {...S.stitch} />
+      <line x1="64" y1="30" x2="62" y2="80" {...S.stitch} />
+      <line x1="18" y1="50" x2="18" y2="130" {...S.stitch} />
+      <line x1="82" y1="50" x2="82" y2="130" {...S.stitch} />
+      <line x1="18" y1="135" x2="82" y2="135" {...S.stitch} />
+    </svg>
+  );
+}
+
+/* ── Hoodie ── */
+
+function HoodieDrawing({ view }: { view: "front" | "back" }) {
+  if (view === "front") {
+    return (
+      <svg viewBox="0 0 130 170" className="w-full" style={{ maxHeight: 300 }}>
+        {/* Body */}
+        <path
+          d="M42 18 L30 24 Q20 32 16 46 L12 66 L10 82 L10 136 Q10 142 14 144 L58 144 L58 138 L65 142 L72 138 L72 144 L116 144 Q120 142 120 136 L120 82 L118 66 L114 46 Q110 32 100 24 L88 18"
+          stroke={S.stroke} strokeWidth={S.strokeWidth} fill={S.fill} strokeLinejoin="round"
+        />
+        {/* Hood */}
+        <path d="M42 18 Q40 8 42 2 Q50 -4 65 -4 Q80 -4 88 2 Q90 8 88 18" stroke={S.stroke} strokeWidth={S.strokeWidth} fill={S.fill} />
+        <path d="M42 18 Q50 14 65 14 Q80 14 88 18" stroke={S.stroke} strokeWidth={0.6} fill={S.fill} />
+        {/* Drawstring */}
+        <line x1="58" y1="18" x2="56" y2="38" {...S.detail} />
+        <line x1="72" y1="18" x2="74" y2="38" {...S.detail} />
+        {/* Center zip */}
+        <line x1="65" y1="18" x2="65" y2="144" stroke={S.stroke} strokeWidth={0.6} />
+        {/* Zip teeth */}
+        {[26, 34, 42, 50, 58, 66, 74, 82, 90, 98].map((y) => (
+          <line key={y} x1="63" y1={y} x2="67" y2={y} {...S.detail} />
+        ))}
+        {/* Left sleeve */}
+        <path d="M16 46 L0 62 L-2 92 L0 114 Q2 120 6 122 L14 122 L16 120 L18 114" stroke={S.stroke} strokeWidth={S.strokeWidth} fill={S.fill} strokeLinejoin="round" />
+        {/* Right sleeve */}
+        <path d="M114 46 L130 62 L132 92 L130 114 Q128 120 124 122 L116 122 L114 120 L112 114" stroke={S.stroke} strokeWidth={S.strokeWidth} fill={S.fill} strokeLinejoin="round" />
+        {/* Kangaroo pocket */}
+        <path d="M28 82 Q30 90 38 96 L92 96 Q100 90 102 82" stroke={S.stroke} strokeWidth={0.6} fill={S.fill} />
+        <line x1="65" y1="82" x2="65" y2="96" {...S.detail} />
+        {/* Ribbed cuffs */}
+        <line x1="0" y1="118" x2="14" y2="118" {...S.detail} />
+        <line x1="0" y1="120" x2="14" y2="120" {...S.detail} opacity={0.25} />
+        <line x1="116" y1="118" x2="130" y2="118" {...S.detail} />
+        <line x1="116" y1="120" x2="130" y2="120" {...S.detail} opacity={0.25} />
+        {/* Ribbed hem */}
+        <line x1="10" y1="140" x2="120" y2="140" {...S.detail} />
+        <line x1="10" y1="142" x2="120" y2="142" {...S.detail} opacity={0.25} />
+        {/* Shoulder seams */}
+        <line x1="42" y1="18" x2="16" y2="46" {...S.stitch} />
+        <line x1="88" y1="18" x2="114" y2="46" {...S.stitch} />
+      </svg>
+    );
+  }
+  return (
+    <svg viewBox="0 0 130 170" className="w-full" style={{ maxHeight: 300 }}>
+      <path
+        d="M42 18 L30 24 Q20 32 16 46 L12 66 L10 82 L10 136 Q10 142 14 144 L116 144 Q120 142 120 136 L120 82 L118 66 L114 46 Q110 32 100 24 L88 18"
+        stroke={S.stroke} strokeWidth={S.strokeWidth} fill={S.fill} strokeLinejoin="round"
+      />
+      {/* Hood back */}
+      <path d="M42 18 Q40 8 42 2 Q50 -4 65 -4 Q80 -4 88 2 Q90 8 88 18" stroke={S.stroke} strokeWidth={S.strokeWidth} fill={S.fill} />
+      <path d="M42 18 Q50 14 65 14 Q80 14 88 18" stroke={S.stroke} strokeWidth={0.6} fill={S.fill} />
+      {/* Center back */}
+      <line x1="65" y1="14" x2="65" y2="144" {...S.fold} />
+      {/* Sleeves */}
+      <path d="M16 46 L0 62 L-2 92 L0 114 Q2 120 6 122 L14 122 L16 120 L18 114" stroke={S.stroke} strokeWidth={S.strokeWidth} fill={S.fill} strokeLinejoin="round" />
+      <path d="M114 46 L130 62 L132 92 L130 114 Q128 120 124 122 L116 122 L114 120 L112 114" stroke={S.stroke} strokeWidth={S.strokeWidth} fill={S.fill} strokeLinejoin="round" />
+      {/* Shoulder seams */}
+      <line x1="42" y1="18" x2="16" y2="46" {...S.stitch} />
+      <line x1="88" y1="18" x2="114" y2="46" {...S.stitch} />
+      {/* Side seams */}
+      <line x1="10" y1="82" x2="10" y2="136" {...S.stitch} />
+      <line x1="120" y1="82" x2="120" y2="136" {...S.stitch} />
+      {/* Ribbed hem */}
+      <line x1="10" y1="140" x2="120" y2="140" {...S.detail} />
+      <line x1="10" y1="142" x2="120" y2="142" {...S.detail} opacity={0.25} />
+    </svg>
+  );
+}
+
+/* ── Shorts ── */
+
+function ShortsDrawing({ view }: { view: "front" | "back" }) {
+  if (view === "front") {
+    return (
+      <svg viewBox="0 0 100 110" className="w-full" style={{ maxHeight: 220 }}>
+        {/* Waistband */}
+        <path d="M18 6 L82 6 Q84 6 84 8 L84 16 Q84 18 82 18 L18 18 Q16 18 16 16 L16 8 Q16 6 18 6 Z" stroke={S.stroke} strokeWidth={S.strokeWidth} fill={S.fill} />
+        {/* Belt loops */}
+        {[24, 38, 50, 62, 76].map((x) => (
+          <rect key={x} x={x - 1.5} y={4} width={3} height={16} rx={0.5} {...S.detail} />
+        ))}
+        {/* Left leg */}
+        <path d="M16 18 L14 36 L12 52 L12 88 Q12 92 16 92 L46 92 Q48 92 48 88 L50 52" stroke={S.stroke} strokeWidth={S.strokeWidth} fill={S.fill} strokeLinejoin="round" />
+        {/* Right leg */}
+        <path d="M84 18 L86 36 L88 52 L88 88 Q88 92 84 92 L54 92 Q52 92 52 88 L50 52" stroke={S.stroke} strokeWidth={S.strokeWidth} fill={S.fill} strokeLinejoin="round" />
+        {/* Fly */}
+        <path d="M50 18 L50 42" stroke={S.stroke} strokeWidth={0.6} />
+        <path d="M44 18 Q44 36 50 42" {...S.stitch} />
+        {/* Fly button */}
+        <circle cx="50" cy="12" r="2" stroke={S.stroke} strokeWidth={0.6} fill={S.fill} />
+        {/* Pocket openings */}
+        <path d="M16 18 Q22 22 30 26" stroke={S.stroke} strokeWidth={0.7} />
+        <path d="M84 18 Q78 22 70 26" stroke={S.stroke} strokeWidth={0.7} />
+        {/* Hem */}
+        <line x1="12" y1="89" x2="46" y2="89" {...S.stitch} />
+        <line x1="54" y1="89" x2="88" y2="89" {...S.stitch} />
+        {/* Outseam */}
+        <line x1="14" y1="36" x2="12" y2="88" {...S.stitch} />
+        <line x1="86" y1="36" x2="88" y2="88" {...S.stitch} />
+      </svg>
+    );
+  }
+  return (
+    <svg viewBox="0 0 100 110" className="w-full" style={{ maxHeight: 220 }}>
+      <path d="M18 6 L82 6 Q84 6 84 8 L84 16 Q84 18 82 18 L18 18 Q16 18 16 16 L16 8 Q16 6 18 6 Z" stroke={S.stroke} strokeWidth={S.strokeWidth} fill={S.fill} />
+      {[24, 38, 50, 62, 76].map((x) => (
+        <rect key={x} x={x - 1.5} y={4} width={3} height={16} rx={0.5} {...S.detail} />
+      ))}
+      <path d="M16 18 L14 36 L12 52 L12 88 Q12 92 16 92 L46 92 Q48 92 48 88 L50 52" stroke={S.stroke} strokeWidth={S.strokeWidth} fill={S.fill} strokeLinejoin="round" />
+      <path d="M84 18 L86 36 L88 52 L88 88 Q88 92 84 92 L54 92 Q52 92 52 88 L50 52" stroke={S.stroke} strokeWidth={S.strokeWidth} fill={S.fill} strokeLinejoin="round" />
+      {/* Center back seam */}
+      <line x1="50" y1="18" x2="50" y2="52" {...S.stitch} />
+      {/* Back pockets */}
+      <path d="M28 30 L28 46 L44 46 L44 30 Z" {...S.detail} />
+      <path d="M56 30 L56 46 L72 46 L72 30 Z" {...S.detail} />
+      {/* Hem */}
+      <line x1="12" y1="89" x2="46" y2="89" {...S.stitch} />
+      <line x1="54" y1="89" x2="88" y2="89" {...S.stitch} />
+      <line x1="14" y1="36" x2="12" y2="88" {...S.stitch} />
+      <line x1="86" y1="36" x2="88" y2="88" {...S.stitch} />
+    </svg>
+  );
+}
+
 /* ── Generic fallback ── */
 
 function GenericDrawing({ view }: { view: "front" | "back" }) {
@@ -599,5 +856,9 @@ const drawingMap: Record<GarmentKey, React.FC<{ view: "front" | "back" }>> = {
   trousers: TrousersDrawing,
   jacket: JacketDrawing,
   knitwear: KnitwearDrawing,
+  shirt: ShirtDrawing,
+  vest: VestDrawing,
+  hoodie: HoodieDrawing,
+  shorts: ShortsDrawing,
   generic: GenericDrawing,
 };
