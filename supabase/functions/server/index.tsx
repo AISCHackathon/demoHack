@@ -11,7 +11,11 @@ app.use("*", logger(console.log));
 app.use(
   "/*",
   cors({
-    origin: "*",
+    origin: [
+      "http://localhost:5173",
+      "http://localhost:4173",
+      "https://vevhdlemterygkpqusfq.supabase.co",
+    ],
     allowHeaders: ["Content-Type", "Authorization"],
     allowMethods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     exposeHeaders: ["Content-Length"],
